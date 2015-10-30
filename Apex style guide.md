@@ -1,3 +1,4 @@
+
 # Apex Style Guide #
 
 <!-- MarkdownTOC depth=0 autolink=true autoanchor=true bracket=round -->
@@ -21,10 +22,12 @@
 - [Apex-Specific SObject Constructor Syntax](#apex-specific-sobject-constructor-syntax)
 - [Test.startTest() and Test.stopTest()](#teststarttest-and-teststoptest)
 - [Naming Conventions](#naming-conventions)
-  - [Class and Trigger](#class-and-trigger)
+  - [Custom sObjects and Custom Fields](#sobjects)
+  - [Classes](#class)
   - [Methods](#methods)
   - [Test classes](#test-classes)
-
+  - [Exceptions](#exceptions)
+  
 <!-- /MarkdownTOC -->
 
 <a name="intro"></a>
@@ -219,17 +222,24 @@ When writing test cases, always use `Test.startTest();` and `Test.stopTest();`. 
 <a name="naming-conventions"></a>
 ## Naming Conventions
 
-<a name="class-and-trigger"></a>
-### Class and Trigger
-Name a class or trigger after what it does.  Triggers should be verbs and end with `Trigger` (e.g., `SyncCaseToplineWithDescriptionTrigger`).  Controllers and Controller Extensions should end with the word `Controller`.
+<a name="sobjects"></a>
+### Custom sObjects and Custom Fields
+The names of sObjects and sObject fields should be capitalized with underscores separating the words (e.g. `My_Object_Name` and `My_Field_Name`).
+
+<a name="class"></a>
+### Classes
+Name a class or trigger after what it does. Names should be CamelCase with the first letter capitalized (e.g. `MyApexClass`). Controllers and Controller Extensions should end with the word `Controller`.
 
 <a name="methods"></a>
 ### Methods
-Methods should all be verbs.  Getters and setters should have no side effects (with the exception of setting up cached values and/or logging), and should begin with `get` or `set`.
+Method names should all be verbs. Names should be camelCase with the first letter lowercased. Getters and setters should have no side effects (with the exception of setting up cached values and/or logging) and should begin with `get` or `set`.
 
 <a name="test-classes"></a>
 ### Test classes
-Test classes should be named `TEST_ClassUnderTest`.  If the test is not a unit-level test but instead a broader test case, it it should be named `TEST_StuffThatsGenerallyBeingTested`.
+Test classes should be named with the word Test preceding the name of the class being tested (e.g. `TestClassUnderTest`).
 
+<a name="exceptions"></a>
+### Custom Exceptions
+Custom exception names should begin with a capital X and end with Exception. Names should be camelCase with the first letter lowercased (e.g. `XCustomApplicationException`).
 
 > Written with [StackEdit](https://stackedit.io/).
