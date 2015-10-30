@@ -27,6 +27,7 @@
   - [Methods](#methods)
   - [Test classes](#test-classes)
   - [Exceptions](#exceptions)
+  - [Beans](#beans)
   
 <!-- /MarkdownTOC -->
 
@@ -241,5 +242,28 @@ Test classes should be named with the word Test preceding the name of the class 
 <a name="exceptions"></a>
 ### Custom Exceptions
 Custom exception names should begin with a capital X and end with Exception. Names should be camelCase with the first letter lowercased (e.g. `XCustomApplicationException`).
+
+<a name="beans"></a>
+### Beans
+The unique name of the bean should be a concatenation of the name of the interface and the name of the function, separated by a colon (e.g. `IPipelineComponent:account-trigger-pipeline'`).
+
+The BeanRegistry class contains a helper function to create the unique name. When registering a particular trigger pipeline: 
+
+    BeanRegistry.getInstance().registerBean(
+	   BeanRegistry.getInstance().generateUniqueBeanName(
+	      IPipelineContainer.class, 'account-trigger-pipeline'
+	   ),
+	   IPipelineContainer.class,
+       TriggerPipeline.class,
+       new Map<String, Object>{
+	      'pipelineClassUniqueNames'=> new String[]{
+    	     'IPipelineComponent:account-trigger-0',
+    	     'IPipelineComponent:account-trigger-1'
+    	  } // unique names of the pipeline beans registered above
+       },
+       true
+	)
+
+ 
 
 > Written with [StackEdit](https://stackedit.io/).
