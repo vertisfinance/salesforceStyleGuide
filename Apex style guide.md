@@ -1,100 +1,169 @@
 
-# Apex Style Guide #
+# nCino Apex Style Guide #
 
 <!-- MarkdownTOC depth=0 autolink=true autoanchor=true bracket=round -->
 
 - [Intro](#intro)
   - [Goals](#goals)
   - [Sources](#sources)
-- [Basics](#basics)
-  - [Special characters](#special-characters)
-    - [Whitespace](#whitespace)
-    - [Special escape sequences](#special-escape-sequences)
-    - [Other Non-ASCII Characters](#other-non-ascii-characters)
-- [Structure](#structure)
+  - [Updates](#updates)
+- [File Basics](#basics)
+  - [Naming](#file-naming)
+  - [Structure](#file-structure)
+	  - [Column Limit](#column-limit)
+	  - [Order of Members](#order-of-members)
+  - [Whitespace](#whitespace)
+- [Formatting](#formatting)
+  - [Line Wrapping](#line-wrapping)
   - [Indentation](#indentation)
-  - [New-lines and spaces](#new-lines-and-spaces)
+  - [Spaces](#spaces)
   - [Prefer Explicit Declarations](#prefer-explicit-declarations)
-  - [`@isTest`](#istest)
-  - [Capitalization](#capitalization)
-  - [Example](#example)
 - [SOQL](#soql)
-- [Apex-Specific SObject Constructor Syntax](#apex-specific-sobject-constructor-syntax)
-- [Test.startTest() and Test.stopTest()](#teststarttest-and-teststoptest)
+- [Tests](#tests)
+	- [Code Coverage](#coverage)
+	- [Test Separation](#test-separation)
+	- [`@isTest`](#istest)
+	- [Test.startTest() and Test.stopTest()](#teststarttest-and-teststoptest)
 - [Naming Conventions](#naming-conventions)
+  - [Capitalization](#capitalization)
   - [Custom sObjects and Custom Fields](#sobjects)
   - [Classes](#class)
   - [Methods](#methods)
   - [Test classes](#test-classes)
   - [Exceptions](#exceptions)
   - [Beans](#beans)
+- [Programming Practices](#programming-practices)
+	- [Apex-Specific SObject Constructor Syntax](#apex-specific-sobject-constructor-syntax)
   
 <!-- /MarkdownTOC -->
 
 <a name="intro"></a>
 ## Intro
 
+> “Programs are meant to be read by humans and only incidentally for computers to execute.”
+> 
+> — H. Abelson and G. Sussman (in “Structure and Interpretation of Computer Programs”)
+
 <a name="goals"></a>
 ### Goals
-The goal of this style guide is like that of any other style guide.  Everyone has their own ideas of what makes code pretty.  As long as there's some logic behind that beauty, no one is right or wrong.  But it's important to have a standard so that:
+The goal of this style guide is to define the aesthetic (formatting) and non-aesthetic standards (naming, conventions, etc.) that should be considered "hard-and-fast" rules for coding at nCino. Such standards are important in that they help ensure that:
 
-1. New and old developers, and outside contractors of all sorts can easily read, understand and maintain our growing code base.
-2. Code merges are easy to handle and are content-ful, not style-ful.
+1. New and old developers, and outside contractors of all sorts can easily read, understand, and maintain our growing code base.
+2. By establishing a consistent structure, it becomes easier to focus on the meaning rather than appearance of the code.
+3. Code merges are easy to handle and are content-ful, not style-ful.
 
-See the Internet for more arguments about why style guides are important and useful things and not just a waste of time.
+For more information on the importance of style guides, read ["Why Coding Style Matters"](http://www.smashingmagazine.com/2012/10/why-coding-style-matters/) by Nicholas Zakas.
 
 <a name="sources"></a>
 ### Sources
-Since Apex is largely a Java and C# spin-off, I am largely relying on [Google Java Style Guide](http://google-styleguide.googlecode.com/svn/trunk/javaguide.html) first, then C# where those do not apply.  And some is just pulled out of my own opinions.
+The nCino Style Guide was started by Jaco Raubenheimer and expanded by the developers at nCino. Because Apex is based on Java, the guide is founded on the original [Oracle Java Conventions](http://www.oracle.com/technetwork/java/codeconventions-150003.pdf). Formatting and additional standards are based on the [PolarisProject/salesforceStyleGuide](https://github.com/PolarisProject/salesforceStyleGuide) repository.
 
-This is still a living document and I'm happy to make changes.
+<a name="updates"></a>
+### Updates
+This guide is a living document. Changes to the guide should not be made unilaterally, but any problems or omissions should be raised to the Development Manager or a Lead Developer.
 
 <a name="basics"></a>
-## Basics
-<a name="special-characters"></a>
-### Special characters
+## Class File Basics
+
+<a name="file-naming"></a>
+### Naming
+The source file name consists of the case-sensitive name of the top-level class it contains, plus the `.cls` extension.
+
+<a name="file-structure"></a>
+### Structure
+
+<a name="column-limit"></a>
+#### Column Limit
+Files should have a column limit of either 100 characters.
+
+<a name="order-of-members"></a>
+#### Order of Members
+```
+// class definition
+// instance variables
+  // global instance variables
+  // public instance variables
+  // protected instance variables
+  // private instance variables
+// constructors (global, public, protected, private)
+// methods
+  // global methods (abstract, virtual, final)
+  // public methods (abstract, virtual, final)
+  // protected methods (abstract, virtual, final)
+  // private methods
+  // static methods
+// static variables (global, public, protected, private)
+// inner classes (global, public, protected, private)
+// static constants (global, public, protected, private)
+```
 <a name="whitespace"></a>
-#### Whitespace
+### Whitespace
 The only permissible whitespace characters in source code are newline and space (0x20).  Inside of a string literal, only a space is allowed.  Line must not end with spaces (`/ +$/` must not match anything in the file).  Classes should all end with a newline.
 
-<a name="special-escape-sequences"></a>
-#### Special escape sequences
-For any character that has a special escape sequence (`\b`, `\t`, `\n`, `\f`, `\r`, `\"`, `\'` and `\\`), that sequence is used rather than the corresponding octal (e.g. `\012`) or Unicode (e.g. `\u000a`) escape.
+<a name="formatting"></a>
+## Formatting
 
-<a name="other-non-ascii-characters"></a>
-#### Other Non-ASCII Characters
-For the remaining non-ASCII characters, either the actual Unicode character (e.g. `∞`) or the equivalent Unicode escape (e.g. `\u221e`) is used, depending only on which makes the code easier to read and understand.
+<a name="line-wrapping"></a>
+###Line Wrapping
+When code that might otherwise legally occupy a single line is divided into multiple lines to avoid overflowing the column limit, this is called line-wrapping.
 
-  > Tip: In the Unicode escape case, and occasionally even when actual Unicode characters are used, an explanatory comment can be very helpful.
+There is no comprehensive, deterministic formula showing exactly how to line-wrap in every situation. Very often there are several valid ways to line-wrap the same piece of code. There are, however, guiding principles that should be followed:
 
-<a name="structure"></a>
-## Structure
-
-The ordering of the members of a class can have a great effect on learnability, but there is no single correct recipe for how to do it. Different classes may order their members differently.
-
-What is important is that each class order its members in some logical order, which its maintainer could explain if asked. For example, new methods are not just habitually added to the end of the class, as that would yield "chronological by date added" ordering, which is not a logical ordering.
+ - Prefer higher-level breaks to lower-level breaks
+ - Break after a comma.
+ - Break before an operator.
 
 <a name="indentation"></a>
 ### Indentation
-All blocks of code should be indented with 2 spaces.  Spaces, not tabs, to ensure that it looks the same on everyone's screen and doesn't waste horizontal space.
+All blocks of code should be indented with a tab. In order to ensure that indentations appear the same on everyone's screen, you must configure the settings of your IDE to set a tab as equivalent to **3 spaces**.
 
-<a name="new-lines-and-spaces"></a>
-### New-lines and spaces
-Use vertical whitespace as appropriate.  Don't be afraid to separate blocks of code.
+<a name="spaces"></a>
+###Spaces
+Blank spaces should be used in the following circumstances:
 
-Prefer placing comments on a line by themselves.
-
-Open braces should have a space before them and not a newline.  The matching close brace should line up with the start of the opening brace's line.
-
-`else`s and `else if`s do not get a new-line before them.  Neither do `catch`es or `while`s in a `do...while` loop.
-
-The parenthetical clause in `if`, `while`, `do`, `catch`, etc., statements should be preceded and followed by a single space.
-
-In method definitions, there should be no space before the open parenthesis, and one space after.
-
-In method calls and definitions, there should not be whitespace between the name of the method and the open parenthesis.
-
-A single space should separate binary operators from the surrounding elements (e.g., `+`, `||`, `=`, `>=`).  Unary operators (`!`, `-`) should be attached to their parameters.  A colon inside a `for each` loop (e.g., `for (Contact cnt : contacts) {`) should have one space on either side.  There should be no whitespace before commas, and one space after (e.g., `System.debug(LoggingLevel.INFO, 'fsdfs');`).
+ - A keyword followed by a parenthesis should be separated by a space. The parenthetical clause in `if`, `while`, `do`, `catch`, etc. statements should be preceded and followed by a single space. Example:
+```
+while (true) {
+	...
+}
+```
+ - In method calls and definitions, there should not be whitespace between the name of the method and the open parenthesis. This helps distinguish keywords from method calls. Example:
+```
+public static Integer calculateTotal(List<Integer> vals){
+	...
+}
+calculateTotal(vals);
+```
+ - A blank space should appear after commas in argument lists. There should be no whitespace before commas. Example:
+```
+System.debug(LoggingLevel.INFO, 'fsdfs');
+```
+ - A single space should separate binary operators from the surrounding elements (e.g., `+`, `||`, `=`, `>=`).  Unary operators (e.g., `++`, `--`) should be attached to their parameters.  Example:
+```
+a += c + d;
+a = (a + b) / (c * d);
+while (d++ = s++) {
+	n++;
+}
+```
+ - The expressions in a `for` statement should be separated by blank spaces. A colon inside a `for each` loop should have one space on either side. Example:
+```
+for (expr1; expr2; expr3) {}
+for (Contact c : contacts) {}
+```
+ - Casts should be followed by a blank space. Example:
+```
+myMethod((byte) aNum, (Object) x);
+```
+ - Open braces should have a space before them and not a newline.  The matching close brace should line up with the start of the opening brace's line.
+ - `else` and `else if` statements do not get a new-line before them.  Neither do `catch` or `while` statements in a `do...while` loop. Example:
+```
+if (val < 10) {
+	...
+} else {
+	...
+}
+```
 
 If using C#-style properties, code should follow the following rules:
 
@@ -111,74 +180,6 @@ Always specify:
 * `with sharing`/`without sharing`
 * `this` when calling local methods or setting local members/properties.
 
-<a name="istest"></a>
-### `@isTest`
-In a test method, use the `@isTest` attribute instead of the `testmethod` modifier.
-
-<a name="capitalization"></a>
-### Capitalization
-
-We follow the Java standard of capitalization with the listed exceptions.  That means that statements (`for`, `if`, etc.) should be lowercase, constants should be `UPPER_CASE_WITH_UNDERSCORES`, classes and class-level variables should be declared as `UpperCamelCase`, and methods, parameters and local variables should all be declard as `lowerCamelCase`.
-
-Native Apex methods and classes should generally be referenced as written in official Salesforce documentation.  This means that schemas and classes are `UpperCamelCase` and methods are `lowerCamelCase`.  The only deviation from this rule is `SObject` which should be written as such (in the documentation, it is usually written `sObject` which does not conform to this style guide and should not be used).
-
-However, when referencing any metadata (SObject, SObjectField, FieldSet, Action, Class, Page, etc.), use the declared capitalization.  Even when referencing a method, field, etc., that is not capitalized according to these rules, still use the declared capitalization.
-
-<a name="example"></a>
-### Example
-
-```java
-public class MyClass {
-
-  private Contact internallyUsedContact { get; set; }
-
-  public Integer calculatedInteger {
-    get {
-      return 5;
-    }
-    set {
-      this.internallyUsedContact = [SELECT Id
-                                    FROM Contact
-                                    WHERE Number_of_Peanuts__c > :value
-                                    LIMIT 1];
-    }
-  }
-
-  private Id contactId {
-    get;
-    set {
-      System.debug('Why do this?');
-      this.contactId = value;
-    }
-  }
-
-  public void foo(Integer bar) {
-    if (bar == 3) {
-      // Diane often asks when bar is 3.
-      System.debug(this.debugCode(bar) + ' - hi there!');
-      return;
-    } else if (bar > 7) {
-      List<Integer> wasteOfSpace = new List<Integer>();
-      do {
-        wasteOfSpace.add(this.calculatedInteger);
-      } while (wasteOfSpace.size() < 5);
-    } else {
-      try {
-        upsert v;
-      } catch (Exception ex) {
-        handleException(ex);
-      }
-    }
-
-    for (Integer i : wasteOfSpace) {
-      System.debug('Here\'s an integer! ' + i);
-    }
-  }
-
-}
-```
-
-
 <a name="soql"></a>
 ## SOQL
 
@@ -188,40 +189,55 @@ SOQL keywords (e.g., `SELECT`, `WHERE`, `TODAY`) should always be written in `AL
 
 Long lists of fields in a `SELECT` clause should be ordered in a logical manner and broken to fit within page width, with subsequent lines aligned with the first field.  Always select `Id`, and always select it first.
 
-Example (in context):
-
-```java
-String typeToSelect = 'abcde';
-List<Contact> cnts = [SELECT Id, FirstName, LastName, Phone, Email,
-                             MailingCity, MailingState,
-                             (SELECT Id, ActivityDate, Origin, Type,
-                                     WhatId, What.Name, RecordTypeId
-                              FROM ActivityHistories
-                              WHERE Type = :typeToSelect)
-                      FROM Contact
-                      WHERE CreatedDate >= TODAY];
-```
-
-<a name="apex-specific-sobject-constructor-syntax"></a>
-## Apex-Specific SObject Constructor Syntax
-When creating an SObject, generally prefer the Apex-specific syntax wherein all fields can be initialized from the constructor.  When using this syntax, choose a different line for each property so that diff-ing and versioning is easier.
-
 Example:
 
 ```java
-Contact c = new Contact(RecordTypeId = CONTACT_RECORDTYPE_ID,
-                        FirstName = firstName,
-                        LastName = surname,
-                        MailingCountry = DEFAULT_COUNTRY
-                       );
+String typeToSelect = 'abcde';
+List<Contact> cnts = [
+	SELECT
+		Id,
+		FirstName,
+		LastName,
+		Phone,
+		Email,
+		MailingCity,
+		MailingState
+	FROM
+	    Contact
+    WHERE
+	    CreatedDate >= TODAY];
 ```
 
+<a name="tests"></a>
+##Tests
+
+<a name="coverage"></a>
+### Code Coverage
+Although Salesforce requires at least 75% test code coverage, the minimum allowable test code coverage at nCino is 90%.
+
+<a name="test-separation"></a>
+### Tests Separation
+A test should never be in the same file as the class/method that it is testing.
+
+<a name="istest"></a>
+### `@isTest`
+In a test method, use the `@isTest` attribute instead of the `testmethod` modifier.
+
 <a name="teststarttest-and-teststoptest"></a>
-## Test.startTest() and Test.stopTest()
-When writing test cases, always use `Test.startTest();` and `Test.stopTest();`.  Do not indent the code between those method calls, but do use one line of vertical whitespace above and below those method calls to seprate those lines from surrounding code.
+### Test.startTest() and Test.stopTest()
+When writing test cases, always use `Test.startTest();` and `Test.stopTest();`.  Do not indent the code between those method calls, but do use one line of vertical whitespace above and below those method calls to separate those lines from surrounding code.
 
 <a name="naming-conventions"></a>
 ## Naming Conventions
+
+<a name="capitalization"></a>
+### Capitalization
+
+We follow the Java standard of capitalization with the listed exceptions.  That means that statements (`for`, `if`, etc.) should be lowercase, constants should be `UPPER_CASE_WITH_UNDERSCORES`, classes and class-level variables should be declared as `UpperCamelCase`, and methods, parameters and local variables should all be declard as `lowerCamelCase`.
+
+Native Apex methods and classes should generally be referenced as written in official Salesforce documentation.  This means that schemas and classes are `UpperCamelCase` and methods are `lowerCamelCase`. 
+
+However, when referencing any metadata (SObject, SObjectField, FieldSet, Action, Class, Page, etc.), use the declared capitalization.  Even when referencing a method, field, etc., that is not capitalized according to these rules, still use the declared capitalization.
 
 <a name="sobjects"></a>
 ### Custom sObjects and Custom Fields
@@ -248,22 +264,105 @@ Custom exception names should begin with a capital X and end with Exception. Nam
 The unique name of the bean should be a concatenation of the name of the interface and the name of the function, separated by a colon (e.g. `IPipelineComponent:account-trigger-pipeline'`).
 
 The BeanRegistry class contains a helper function to create the unique name. When registering a particular trigger pipeline: 
+```java
+BeanRegistry.getInstance().registerBean(
+	BeanRegistry.getInstance().generateUniqueBeanName(
+		IPipelineContainer.class,
+		'account-trigger-pipeline'
+	),
+	IPipelineContainer.class,
+    TriggerPipeline.class,
+    new Map<String, Object>{
+		'pipelineClassUniqueNames'=> new String[]{
+	    	'IPipelineComponent:account-trigger-0',
+    	    'IPipelineComponent:account-trigger-1'
+    	} // unique names of the pipeline beans registered above
+    },
+    true
+)
+```
+ <a name="programming-practices"></a>
+## Programming Practices
 
-    BeanRegistry.getInstance().registerBean(
-	   BeanRegistry.getInstance().generateUniqueBeanName(
-	      IPipelineContainer.class, 'account-trigger-pipeline'
-	   ),
-	   IPipelineContainer.class,
-       TriggerPipeline.class,
-       new Map<String, Object>{
-	      'pipelineClassUniqueNames'=> new String[]{
-    	     'IPipelineComponent:account-trigger-0',
-    	     'IPipelineComponent:account-trigger-1'
-    	  } // unique names of the pipeline beans registered above
-       },
-       true
-	)
+<a name="apex-specific-sobject-constructor-syntax"></a>
+### Apex-Specific SObject Constructor Syntax
+When creating an SObject, generally prefer the Apex-specific syntax wherein all fields can be initialized from the constructor.  When using this syntax, choose a different line for each property so that diff-ing and versioning is easier.
 
- 
+Example:
+
+```java
+Contact c = new Contact(
+	RecordTypeId = CONTACT_RECORDTYPE_ID,
+    FirstName = firstName,
+    LastName = surname,
+    MailingCountry = DEFAULT_COUNTRY
+);
+```
+
+##Deprecating Fields and Classes
+
+###Deprecating Fields
+
+ 1. Find the field that you wish to deprecate in your Salesforce Dev Org.
+ 2. Add `-D` to the beginning of the field label.
+ 3. Add `--DEPRECATED--` to the beginning of the description. 
+
+> If you are deprecating a field that will be replaced with another field, add the field that will be replacing this field to the description as well.
+
+ 4. Click Save.
+ 5. In your IDE, pull down the latest .object file and the object translation file for the object that the field is on. If the field is on a standard Salesforce object, there will be no object translation file to pull into your IDE.
+ 6. In your IDE, look at all of the .layout files for the object that the field is on. If the field exists in any of these files, remove it.
+ 7. Verify that packaged validation rules are not affected by the deprecated field.
+
+###Deprecating Apex Classes
+To deprecate a class, add a javadoc style `Deprecated` tag to the top of the class and remove all logic from the class. If the class has been superseded by another, include that name in the comment.
+
+> If there are global virtual methods in the class, the method declarations must remain; just remove the logic inside of these methods.
+
+If there is an associated test class, add the javadoc style Deprecated tag to the top of the test class and remove all logic inside test class so that only the class declaration remains. If there are associated test methods within a shared test class, remove only the test methods specific to your deprecated Apex Class.
+
+Run all of the tests in your Dev Org to ensure that you have removed all the test cases linked to the newly deprecated Apex Class.
+
+Example:
+```
+/** 
+* @Deprecated to OpportunityHistoryTriggerHandler
+*/
+
+global class OpportunityHistoryDeletionTrigger extends ATriggerHandler{
+	/**
+	 * @Deprecated
+	 */
+	global override void beforeDelete(List<sObject> objs, Set<Id> objIds){}
+}
+``` 
+###Deprecating Apex Methods
+Find the Apex method you wish to deprecate.
+Add a javadoc style Deprecated tag to the top of the method like the one below.
+/**
+* @Deprecated
+*/
+Remove all logic from the method.
+If the method returns a value, return a null or appropriate Boolean.
+If there are associated test methods, replace test methods with a new test that confirms the deprecated method returns null (or the appropriate Boolean).
+Run all tests in your Dev Org to ensure that there are no other test cases linked to the newly deprecated Apex method.
+If there are test methods within test classes that test more classes than the one being deprecated, remove the test methods specific to your deprecated Apex Class.
+
+###Deprecating Validation Rules
+Find the validation rule that you wish to deprecate in your Salesforce Dev Org.
+Add --DEPRECATED-- to the beginning of the description.
+If you are deprecating a validation rule that will be replaced with another validation rule, add the rule that will be replacing this rule to the description as well. 
+Uncheck the 'Active' checkbox.
+Update the Error Condition Formula to be 'false'.
+Add --DEPRECATED-- to the beginning of the Error Message
+Click Save.
+In your IDE, pull down the latest .object file for the object that the validation rule is on.
+
+##Refactoring
+Every time you touch a file, you should find a way to improve it.
+
+Fixing poor formatting--like brackets, braces, inconsistencies in line breaks, poorly formatted SOQL, etc--is encouraged. These types of formatting fixes are a pretty easy win when you’re looking to “always make it better.”
+
+When you need to reformat whitespace, make those changes in isolation so that those changes are in a pull request of their own. (Whitespace changes typically have to be made to many lines in the file. When whitespace changes and meaningful code changes are made simultaneously, it is hard to distinguish between those changes in the code review diff.)
 
 > Written with [StackEdit](https://stackedit.io/).
