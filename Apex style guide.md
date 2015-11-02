@@ -17,7 +17,6 @@
   - [Line Wrapping](#line-wrapping)
   - [Indentation](#indentation)
   - [Spaces](#spaces)
-  - [Prefer Explicit Declarations](#prefer-explicit-declarations)
 - [SOQL](#soql)
 - [Tests](#tests)
 	- [Code Coverage](#coverage)
@@ -33,7 +32,17 @@
   - [Exceptions](#exceptions)
   - [Beans](#beans)
 - [Programming Practices](#programming-practices)
-	- [Apex-Specific SObject Constructor Syntax](#apex-specific-sobject-constructor-syntax)
+	- [Modifiers](#modifiers)
+	- [Getters and Setters](#getters-and-setters)
+	  - [Explicit Getters and Setters](#explicit)
+	  - [Implicit Getters and Setters](#implicit)
+	- [SObject Constructor Syntax](#sobject-constructor-syntax)
+- [Deprecation](#deprecation)
+	- [Deprecating Fields](#deprecating-fields)
+	- [Deprecating Classes](#deprecating-classes)
+	- [Deprecating Methods](#deprecating-methods)
+	- [Deprecating Validation Rules](#deprecating-validation)
+- [Refactoring](#refactoring)
   
 <!-- /MarkdownTOC -->
 
@@ -165,21 +174,6 @@ if (val < 10) {
 }
 ```
 
-If using C#-style properties, code should follow the following rules:
-
- * Always declare the getter, then the setter.
- * If there is no logic, it should read `{ get; set; }`.
- * If there is logic, there should be a new-line before each open-brace, and before and after each closed-brace.
- * If one clause has logic and one does not, place the clause without logic on its own line.
-
-<a name="prefer-explicit-declarations"></a>
-### Prefer Explicit Declarations
-Always specify:
-
-* `global`/`public`/`private` modifiers - prefer `private`, and if possible, `static`
-* `with sharing`/`without sharing`
-* `this` when calling local methods or setting local members/properties.
-
 <a name="soql"></a>
 ## SOQL
 
@@ -281,11 +275,49 @@ BeanRegistry.getInstance().registerBean(
     true
 )
 ```
+
  <a name="programming-practices"></a>
 ## Programming Practices
 
-<a name="apex-specific-sobject-constructor-syntax"></a>
-### Apex-Specific SObject Constructor Syntax
+<a name="modifiers"></a>
+### Modifiers
+We prefer the explicit declaration of modifiers. Always specify:
+
+* `global`/`public`/`protected`/`private` modifiers - prefer `private`, and if possible, `static`
+* `with sharing`/`without sharing`
+* `this` when calling local methods or setting local members/properties.
+
+<a name="getters-and-setters"></a>
+### Getters and Setters
+Unless creating an interface or POJO, we prefer implicit getters and setters.
+
+<a name="explicit"></a>
+#### Explicit Getters and Setters
+Always declare the getter, then the setter.
+
+<a name="implicit"></a>
+#### Implicit Getters and Setters
+
+ - Always declare the getter, then the setter.
+ - If there is no logic, it should read `{ get; set; }`.
+ - If there is logic for a clause, there should be a line-break before the clause and a line-break before and after each close-brace.
+ - If one clause has logic and one does not, place the clause without logic on its own line.
+
+Example:
+```java
+public Boolean isEditable {
+	get {
+		if (isEditable == null) {
+			isEditable = Utility.hasPermissionSet(EDIT);
+		}
+		return isEditable;
+	}
+	protected set;
+}
+```
+
+<a name="sobject-constructor-syntax"></a>
+### SObject Constructor Syntax
 When creating an SObject, generally prefer the Apex-specific syntax wherein all fields can be initialized from the constructor.  When using this syntax, choose a different line for each property so that diff-ing and versioning is easier.
 
 Example:
@@ -299,27 +331,30 @@ Contact c = new Contact(
 );
 ```
 
-##Deprecating Fields and Classes
+<a name="deprecation"></a>
+##Deprecation
 
+<a name="deprecating-fields">
 ###Deprecating Fields
 
- 1. Find the field that you wish to deprecate in your Salesforce Dev Org.
- 2. Add `-D` to the beginning of the field label.
- 3. Add `--DEPRECATED--` to the beginning of the description. 
+1. Find the field that you wish to deprecate in your Salesforce Dev Org.
+2. Add `-D` to the beginning of the field label.
+3. Add `--DEPRECATED--` to the beginning of the description. 
 
-> If you are deprecating a field that will be replaced with another field, add the field that will be replacing this field to the description as well.
+	> If you are deprecating a field that will be replaced with another field, add the field that will be replacing this field to the description as well.
 
- 4. Click Save.
- 5. In your IDE, pull down the latest .object file and the object translation file for the object that the field is on. If the field is on a standard Salesforce object, there will be no object translation file to pull into your IDE.
- 6. In your IDE, look at all of the .layout files for the object that the field is on. If the field exists in any of these files, remove it.
- 7. Verify that packaged validation rules are not affected by the deprecated field.
+4. Click Save.
+5. In your IDE, pull down the latest .object file and the object translation file for the object that the field is on. If the field is on a standard Salesforce object, there will be no object translation file to pull into your IDE.
+6. In your IDE, look at all of the .layout files for the object that the field is on. If the field exists in any of these files, remove it.
+7. Verify that packaged validation rules are not affected by the deprecated field.
 
+<a name="deprecating-classes"></a>
 ###Deprecating Apex Classes
 To deprecate a class, add a javadoc style `Deprecated` tag to the top of the class and remove all logic from the class. If the class has been superseded by another, include that name in the comment.
 
 > If there are global virtual methods in the class, the method declarations must remain; just remove the logic inside of these methods.
 
-If there is an associated test class, add the javadoc style Deprecated tag to the top of the test class and remove all logic inside test class so that only the class declaration remains. If there are associated test methods within a shared test class, remove only the test methods specific to your deprecated Apex Class.
+If there is an associated test class, add the javadoc style `Deprecated` tag to the top of the test class and remove all logic inside test class so that only the class declaration remains. If there are associated test methods within a shared test class, remove only the test methods specific to your deprecated Apex Class.
 
 Run all of the tests in your Dev Org to ensure that you have removed all the test cases linked to the newly deprecated Apex Class.
 
@@ -336,28 +371,36 @@ global class OpportunityHistoryDeletionTrigger extends ATriggerHandler{
 	global override void beforeDelete(List<sObject> objs, Set<Id> objIds){}
 }
 ``` 
+
+<a name="deprecating-methods"></a>
 ###Deprecating Apex Methods
-Find the Apex method you wish to deprecate.
-Add a javadoc style Deprecated tag to the top of the method like the one below.
-/**
-* @Deprecated
-*/
-Remove all logic from the method.
-If the method returns a value, return a null or appropriate Boolean.
-If there are associated test methods, replace test methods with a new test that confirms the deprecated method returns null (or the appropriate Boolean).
-Run all tests in your Dev Org to ensure that there are no other test cases linked to the newly deprecated Apex method.
-If there are test methods within test classes that test more classes than the one being deprecated, remove the test methods specific to your deprecated Apex Class.
+1. Find the Apex method you wish to deprecate.
+2. Add a javadoc style Deprecated tag to the top of the method like the one below.
 
+	    /**
+	    * @Deprecated
+	    */
+
+3. Remove all logic from the method.
+4. If the method returns a value, return a null or appropriate Boolean.
+5. If there are associated test methods, replace test methods with a new test that confirms the deprecated method returns null (or the appropriate Boolean).
+6. Run all tests in your Dev Org to ensure that there are no other test cases linked to the newly deprecated Apex method.
+7. If there are test methods within test classes that test more classes than the one being deprecated, remove the test methods specific to your deprecated Apex Class.
+
+<a name="deprecating-validation"></a>
 ###Deprecating Validation Rules
-Find the validation rule that you wish to deprecate in your Salesforce Dev Org.
-Add --DEPRECATED-- to the beginning of the description.
-If you are deprecating a validation rule that will be replaced with another validation rule, add the rule that will be replacing this rule to the description as well. 
-Uncheck the 'Active' checkbox.
-Update the Error Condition Formula to be 'false'.
-Add --DEPRECATED-- to the beginning of the Error Message
-Click Save.
-In your IDE, pull down the latest .object file for the object that the validation rule is on.
+1. Find the validation rule that you wish to deprecate in your Salesforce Dev Org.
+2. Add `--DEPRECATED--` to the beginning of the description.
 
+	> If you are deprecating a validation rule that will be replaced with another validation rule, add the rule that will be replacing this rule to the description as well. 
+
+3. Uncheck the 'Active' checkbox.
+4. Update the Error Condition Formula to be `false`.
+5. Add `--DEPRECATED--` to the beginning of the Error Message
+6. Click Save.
+7. In your IDE, pull down the latest .object file for the object that the validation rule is on.
+
+<a name="refactoring"></a>
 ##Refactoring
 Every time you touch a file, you should find a way to improve it.
 
