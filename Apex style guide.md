@@ -1,9 +1,9 @@
 
-# nCino Apex Style Guide #
+# nCino Salesforce Style Guide #
 
 <!-- MarkdownTOC depth=0 autolink=true autoanchor=true bracket=round -->
 
-- [Intro](#intro)
+- [Introduction](#intro)
   - [Goals](#goals)
   - [Sources](#sources)
   - [Updates](#updates)
@@ -47,7 +47,7 @@
 <!-- /MarkdownTOC -->
 
 <a name="intro"></a>
-## Intro
+## Introduction
 
 > “Programs are meant to be read by humans and only incidentally for computers to execute.”
 > 
@@ -72,11 +72,11 @@ The nCino Style Guide was started by Jaco Raubenheimer and expanded by the devel
 This guide is a living document. Changes to the guide should not be made unilaterally, but any problems or omissions should be raised to the Development Manager or a Lead Developer.
 
 <a name="basics"></a>
-## Class File Basics
+## File Basics
 
 <a name="file-naming"></a>
 ### Naming
-The source file name consists of the case-sensitive name of the top-level class it contains, plus the `.cls` extension.
+The source file name for a class consists of the case-sensitive name of the top-level class it contains, plus the `.cls` extension.
 
 <a name="file-structure"></a>
 ### Structure
@@ -218,7 +218,7 @@ A test should never be in the same file as the class/method that it is testing.
 In a test method, use the `@isTest` attribute instead of the `testmethod` modifier.
 
 <a name="teststarttest-and-teststoptest"></a>
-### Test.startTest() and Test.stopTest()
+### `Test.startTest()` and `Test.stopTest()`
 When writing test cases, always use `Test.startTest();` and `Test.stopTest();`.  Do not indent the code between those method calls, but do use one line of vertical whitespace above and below those method calls to separate those lines from surrounding code.
 
 <a name="naming-conventions"></a>
