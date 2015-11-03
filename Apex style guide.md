@@ -9,6 +9,9 @@
   - [Updates](#updates)
 - [File Basics](#basics)
   - [Naming](#file-naming)
+	  - [Classes](#file-class-name)
+	  - [Triggers](#file-trigger-name)
+	  - [Pages and Components](#file-page-name)
   - [Structure](#file-structure)
 	  - [Column Limit](#column-limit)
 	  - [Order of Members](#order-of-members)
@@ -76,7 +79,19 @@ This guide is a living document. Changes to the guide should not be made unilate
 
 <a name="file-naming"></a>
 ### Naming
-The source file name for a class consists of the case-sensitive name of the top-level class it contains, plus the `.cls` extension.
+In general, all file names should be descriptive, accurate, and should not abbreviate words (i.e. `RenewalsController` is okay;  `RenController` is not). However, words may be abbreviated if the file name would otherwise be too long .
+
+<a name="file-class-name"></a>
+#### Classes
+The source file name for a class consists of the upper CamelCase name of the top-level class it contains, plus the `.cls` extension. Controller and Conteroller Extension names should end with "Controller." Examples: `MyClass.cls` and `MyPageController.cls`
+
+<a name="file-trigger-name"></a>
+#### Triggers
+The source file name for a trigger consists of the lower camelCase name of the object joined to the upper camelCase of the trigger type with an underscore, plus the `.trigger` extension. Example: `objectName_BeforeInsert.trigger`
+
+<a name="file-page-name"></a>
+#### Pages and Components
+The source file name for pages and components should be either upper CamelCase or upper-case with each word separated by underscores, plus the appropriate extension (`.page` or `.component`). Examples:  `My_Page.page` or `MyComponent.component`
 
 <a name="file-structure"></a>
 ### Structure
@@ -318,7 +333,7 @@ public Boolean isEditable {
 
 <a name="sobject-constructor-syntax"></a>
 ### SObject Constructor Syntax
-When creating an SObject, generally prefer the Apex-specific syntax wherein all fields can be initialized from the constructor.  When using this syntax, choose a different line for each property so that diff-ing and versioning is easier.
+When creating an sObject, generally prefer the Apex-specific syntax wherein all fields can be initialized from the constructor.  When using this syntax, use a different line for each property so that diff-ing and versioning is easier.
 
 Example:
 
