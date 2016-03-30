@@ -139,7 +139,7 @@ There is no comprehensive, deterministic formula showing exactly how to line-wra
 
 <a name="indentation"></a>
 ### Indentation
-All blocks of code should be indented with a tab. In order to ensure that indentations appear the same on everyone's screen, you must configure the settings of your IDE to set a tab as equivalent to **3 spaces**.
+All blocks of code should be indented with a tab. In order to ensure that indentations appear the same on everyone's screen, you must configure the settings of your IDE to set a tab as equivalent to **2 spaces**.
 
 <a name="spaces"></a>
 ###Spaces
